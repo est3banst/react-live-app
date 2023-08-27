@@ -1,36 +1,42 @@
-import React, { useState } from "react";
-import GoogleSignin from "../login/btn_google_signin_dark_pressed_web.png";
+import React from 'react';
+import GoogleSignin from '../login/btn_google_signin_dark_pressed_web.png';
+import { auth } from '../firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
-const NavBar = () => {
-  const [user, setUsr] = useState(false);
 
-  const googleSignIn = () => {
-    setUsr(true);
-  };
+const Navbar = () => {
+    const [ user ] = useAuthState(auth);
 
-  const signOut = () => {
-    setUsr(false);
-  };
+    const googleSignIn = () => {
+        const provider = new GoogleAuthProvider();
+        signInWithPopup( auth, provider );
+    };
 
-  return (
-    <nav className="nav-bar">
-      <h1>Live Chat made with React</h1>
-      {user ? (
-        <button onClick={signOut} className="sign-out" type="button">
-          Sign Out
-        </button>
-      ) : (
-        <button className="sign-in">
-          <img
-            onClick={googleSignIn}
-            src={GoogleSignin}
-            alt="sign in with google"
-            type="button"
-          />
-        </button>
-      )}
-    </nav>
-  );
+    const closeSes = () => {
+        auth.signOut();
+    };
+
+    return (
+        <nav className='my-chat'>
+            <h1> Dopest Live Chat</h1>
+            { user ? (
+                <button onClick={closeSes} className='sign-out'>
+                    Log off
+                </button>
+            ) : (
+                <button className='sign-in'>
+                    <img
+                    onClick={googleSignIn}
+                    src={GoogleSignin}
+                    alt='sign in with google'
+                    type='button'
+                    />
+
+                </button>
+            )}
+        </nav>
+    );
 };
 
-export default NavBar;
+export default Navbar;
